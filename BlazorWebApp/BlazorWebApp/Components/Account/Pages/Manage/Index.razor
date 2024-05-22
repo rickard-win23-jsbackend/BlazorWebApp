@@ -1,0 +1,334 @@
+﻿@page "/Account/Manage"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using BlazorWebApp.Data
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+@attribute [StreamRendering]
+
+@* <section id="details">
+	if (@user == null)
+	{
+	<p>Loading...</p>
+	}
+	else
+	{
+	<AuthorizeView>
+		<Authorized>
+			<aside>
+				<div class="profile-info">
+					<img src="~/images/account/@user.UserProfile?.ProfileImage" alt=@($"user profile picture") />
+					
+					<EditForm enctype="multipart/form-data" method="post" Model="" FormName="" OnValidSubmit="">
+					<InputFile id="fileUploader " hidden />
+					<label for="fileUploader" class="btn btn-circle"><i class="fa-regular fa-refresh"></i></label>
+
+					</form>
+
+					<h5>@($"{@user.UserProfile?.Firstname} {@user.UserProfile?.Lastname}")</h5>
+					<p>@user.Email</p>
+
+				</div>
+				<nav>
+					<a class="btn-theme-s" asp-controller="Account" asp-action="Details"><i class="fa-thin fa-gear"></i>Account Details</a>
+					<a class="btn-gray" asp-controller="Auth" asp-action="SignOut"><i class="fa-sharp fa-light fa-left-from-bracket"></i>Sign Out</a>
+				</nav>
+			</aside>
+		</Authorized>
+	</AuthorizeView>
+	<div class="container" id="account-details">
+		<div id="forms">
+			<form method="post" asp-controller="Account" asp-action="Details" novalidate>
+				<h1>Account Details</h1>
+				<h5> Basic Info</h5>
+				<div class="content">
+
+					<div id="form-firstname" class="input-group">
+						<label asp-for="User.FirstName"></label>
+						<span asp-validation-for="User.FirstName"></span>
+						<input asp-for="User.FirstName" />
+					</div>
+					<div id="form-lastname" class="input-group">
+						<label asp-for="User.LastName"></label>
+						<span asp-validation-for="User.LastName"></span>
+						<input asp-for="User.LastName" />
+					</div>
+					<div id="form-email" class="input-group">
+						<label asp-for="User.Email"></label>
+						<span asp-validation-for="User.Email"></span>
+						<input asp-for="User.Email" />
+					</div>
+					<div id="form-phone" class="input-group">
+						<label asp-for="User.Phone"></label>
+						<span asp-validation-for="User.Phone"></span>
+						<input asp-for="User.Phone" />
+					</div>
+					<div id="form-bio" class="input-group">
+						<label asp-for="User.Bio"></label>
+						<textarea asp-for="User.Bio" placeholder="Add a short bio..."></textarea>
+					</div>
+					<div id="form-confirm">
+						<button type="reset" class="btn-gray">Cancel</button>
+						<button type="submit" class="btn-theme-s">Save Changes</button>
+					</div>
+				</div>
+			</form>
+
+			<form method="post" asp-controller="Account" asp-action="Details" novalidate>
+				<h1>Address</h1>
+				<div id="content-address">
+					<div id="form-Adressline-1" class="input-group">
+						<label asp-for="AddressInfo.Addressline_1"></label>
+						<span asp-validation-for="AddressInfo.Addressline_1"></span>
+						<input asp-for="AddressInfo.Addressline_1" />
+					</div>
+					<div id="form-Adressline-2" class="input-group">
+						<label asp-for="AddressInfo.Addressline_2"></label>
+						<span asp-validation-for="AddressInfo.Addressline_2"></span>
+						<input asp-for="AddressInfo.Addressline_2" />
+					</div>
+					<div id="form-postalcode" class="input-group">
+						<label asp-for="AddressInfo.PostalCode"></label>
+						<span asp-validation-for="AddressInfo.PostalCode"></span>
+						<input asp-for="AddressInfo.PostalCode" />
+					</div>
+					<div id="form-city" class="input-group">
+						<label asp-for="AddressInfo.City"></label>
+						<span asp-validation-for="AddressInfo.City"></span>
+						<input asp-for="AddressInfo.City" />
+					</div>
+					<div id="form-address-confirm">
+						<button type="reset" class="btn-gray">Cancel</button>
+						<button type="submit" class="btn-theme-s">Save Changes</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+
+	}
+</section> *@
+
+@code {
+	// private ApplicationUser user = default!;
+	// private string? username;
+	// private string? phoneNumber;
+
+
+	// [CascadingParameter]
+	// private HttpContext HttpContext { get; set; } = default!;
+
+	// [SupplyParameterFromForm]
+	// private InputModel Input { get; set; } = new();
+
+	// protected override async Task OnInitializedAsync()
+	// {
+	// 	user = await UserManager.GetUserAsync(HttpContext.User) ?? null;
+	
+	// }
+
+	// private async Task OnValidSubmitAsync()
+	// {
+	// 	if (Input.PhoneNumber != phoneNumber)
+	// 	{
+	// 		var setPhoneResult = await UserManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+	// 		if (!setPhoneResult.Succeeded)
+	// 		{
+	// 			RedirectManager.RedirectToCurrentPageWithStatus("Error: Failed to set phone number.", HttpContext);
+	// 		}
+	// 	}
+
+	// 	await SignInManager.RefreshSignInAsync(user);
+	// 	RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+	// }
+
+	// private sealed class InputModel
+	// {
+	// 	[Phone]
+	// 	[Display(Name = "Phone number")]
+	// 	public string? PhoneNumber { get; set; }
+	// }
+
+}
+
+@if (user == null)
+{
+	<p>Loading...</p>
+}
+else
+{
+	<PageTitle>Profile</PageTitle>
+	<h3>Profile</h3>
+	<StatusMessage />
+
+			<aside>
+			
+				<div class="profile-info">
+					<img src="~/images/account/@user.UserProfile?.ProfileImage" alt="user profile picture" />
+					
+					@* <EditForm enctype="multipart/form-data" method="post" Model="" FormName="" OnValidSubmit="">
+					<InputFile id="fileUploader " hidden />
+					<label for="fileUploader" class="btn btn-circle"><i class="fa-regular fa-refresh"></i></label>
+
+					</form> *@
+
+					@if(@user.UserProfile != null)
+					{
+						<h5> @user.UserProfile?.Firstname @user.UserProfile?.Lastname</h5>
+						<p>@user.Email</p>
+
+					}
+					else
+					{
+						<p>no userprofile found??</p>
+					}
+
+				</div>
+				<nav>
+				
+					<a class="btn-theme-s" asp-controller="Account" asp-action="Details"><i class="fa-thin fa-gear"></i>Account Details</a>
+					<a class="btn-gray" asp-controller="Auth" asp-action="SignOut"><i class="fa-sharp fa-light fa-left-from-bracket"></i>Sign Out</a>
+				</nav>
+			</aside>
+
+
+	<div class="row">
+		<div class="col-md-6">
+			<EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+				<DataAnnotationsValidator />
+				<ValidationSummary class="text-danger" role="alert" />
+				<div class="form-floating mb-3">
+					<input type="text" value="@username" class="form-control" placeholder="Please choose your username." disabled />
+					<label for="username" class="form-label">Username</label>
+				</div>
+				<div class="form-floating mb-3">
+					<InputText @bind-Value="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
+					<label for="phone-number" class="form-label">Phone number</label>
+					<ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
+				</div>
+				<button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+			</EditForm>
+		</div>
+	</div>
+
+	<div class="container" id="account-details">
+		<div id="forms">
+			<EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+				<DataAnnotationsValidator />
+				<h1>Account Details</h1>
+				<h5> Basic Info</h5>
+				<div class="content">
+
+					<div id="form-firstname" class="input-group">
+						<label asp-for="User.FirstName"></label>
+						<span asp-validation-for="User.FirstName"></span>
+						<input asp-for="User.FirstName" />
+					</div>
+					<div id="form-lastname" class="input-group">
+						<label asp-for="User.LastName"></label>
+						<span asp-validation-for="User.LastName"></span>
+						<input asp-for="User.LastName" />
+					</div>
+					<div id="form-email" class="input-group">
+						<label asp-for="User.Email"></label>
+						<span asp-validation-for="User.Email"></span>
+						<input asp-for="User.Email" />
+					</div>
+					<div id="form-phone" class="input-group">
+						<label asp-for="User.Phone"></label>
+						<span asp-validation-for="User.Phone"></span>
+						<input asp-for="User.Phone" />
+					</div>
+					<div id="form-bio" class="input-group">
+						<label asp-for="User.Bio"></label>
+						<textarea asp-for="User.Bio" placeholder="Add a short bio..."></textarea>
+					</div>
+					<div id="form-confirm">
+						<button type="reset" class="btn-gray">Cancel</button>
+						<button type="submit" class="btn-theme-s">Save Changes</button>
+					</div>
+				</div>
+			</EditForm>
+
+			<form method="post" asp-controller="Account" asp-action="Details" novalidate>
+				<h1>Address</h1>
+				<div id="content-address">
+					<div id="form-Adressline-1" class="input-group">
+						<label asp-for="AddressInfo.Addressline_1"></label>
+						<span asp-validation-for="AddressInfo.Addressline_1"></span>
+						<input asp-for="AddressInfo.Addressline_1" />
+					</div>
+					<div id="form-Adressline-2" class="input-group">
+						<label asp-for="AddressInfo.Addressline_2"></label>
+						<span asp-validation-for="AddressInfo.Addressline_2"></span>
+						<input asp-for="AddressInfo.Addressline_2" />
+					</div>
+					<div id="form-postalcode" class="input-group">
+						<label asp-for="AddressInfo.PostalCode"></label>
+						<span asp-validation-for="AddressInfo.PostalCode"></span>
+						<input asp-for="AddressInfo.PostalCode" />
+					</div>
+					<div id="form-city" class="input-group">
+						<label asp-for="AddressInfo.City"></label>
+						<span asp-validation-for="AddressInfo.City"></span>
+						<input asp-for="AddressInfo.City" />
+					</div>
+					<div id="form-address-confirm">
+						<button type="reset" class="btn-gray">Cancel</button>
+						<button type="submit" class="btn-theme-s">Save Changes</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+
+
+@code {
+	private ApplicationUser user = default!;
+	private string? username;
+	private string? phoneNumber;
+
+	[CascadingParameter]
+	private HttpContext HttpContext { get; set; } = default!;
+
+	[SupplyParameterFromForm]
+	private InputModel Input { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		user = await UserManager.GetUserAsync(HttpContext.User);
+		username = await UserManager.GetUserNameAsync(user);
+        phoneNumber = await UserManager.GetPhoneNumberAsync(user);
+
+        Input.PhoneNumber ??= phoneNumber;
+    }
+
+private async Task OnValidSubmitAsync()
+    {
+        if (Input.PhoneNumber != phoneNumber)
+        {
+            var setPhoneResult = await UserManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+            if (!setPhoneResult.Succeeded)
+            {
+                RedirectManager.RedirectToCurrentPageWithStatus("Error: Failed to set phone number.", HttpContext);
+            }
+        }
+
+        await SignInManager.RefreshSignInAsync(user);
+        RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+    }
+
+	private sealed class InputModel
+	{
+		[Phone]
+		[Display(Name = "Phone number")]
+		public string? PhoneNumber { get; set; }
+	}
+}

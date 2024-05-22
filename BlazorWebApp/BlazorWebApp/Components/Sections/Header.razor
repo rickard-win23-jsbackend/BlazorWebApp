@@ -1,0 +1,43 @@
+﻿<header>
+    <div class="container">
+        <a href="/"><img id="logo" src="/images/home/solid-logo-header.svg" alt="company logo" /></a>
+
+        <div id="menu">
+            <nav>
+                <AuthorizeView>
+                    <Authorized>
+                        <NavLink class="nav-link" href="/">Overview</NavLink>
+                        <NavLink class="nav-link" href="/courses">Courses</NavLink>
+                        <NavLink class="nav-link" ahref="/">Contact</NavLink>
+                    </Authorized>
+                    <NotAuthorized>
+                        <NavLink class="nav-link" href="/">Overview</NavLink>
+                        <NavLink class="nav-link" href="#features">Features</NavLink>
+                        <NavLink class="nav-link" href="/contacts">Contact</NavLink>
+                    </NotAuthorized>
+                </AuthorizeView>
+             
+            </nav>
+        </div>
+        <div class="btn-switch">
+            <label>Light</label>
+            <label class="switch" for="switch-mode">
+                <input type="checkbox" id="switch-mode" />
+                <div class="slider round"></div>
+            </label>
+            <label>Dark</label>
+        </div>
+        <div class="account-buttons">
+           <AuthorizeView>
+                    <Authorized>
+                    <a class="btn-header-profile-pic" href="/account/manage"><img src="/images/account/..." alt="..." ) /></a>
+ @*                    <a class="btn-header-profile-pic" asp-controller="Account" asp-action="Details"><img src="~/images/account/@user.ProfileImage" alt="@user.Firstname" ) /></a> *@
+                    </Authorized>
+                    <NotAuthorized>
+                    <a class="btn-gray" href="/account/login"><i class="fa-regular fa-right-to-bracket"></i>Sign in</a>
+                    <a class="btn-theme" href="/account/register"><i class="fa-regular fa-user"></i>Sign up</a>
+                    </NotAuthorized>
+           </AuthorizeView>
+        </div>
+    </div>
+</header>

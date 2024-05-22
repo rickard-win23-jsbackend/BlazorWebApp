@@ -1,0 +1,119 @@
+﻿@using System.Text.Json
+
+
+<section id="subscribe" class="subscribe">
+	<div class="container">
+		<div class="title">
+			<h2>Don't Want to Miss Anything?</h2>
+			<img src="/images/home/arrow.svg" alt="swirl arrow"/>
+		</div>
+		<EditForm FormName="SubscriberForm" Model="SubscriberForm" OnValidSubmit="OnValidSubmit" method="post" novalidate>
+			<DataAnnotationsValidator/>
+			<div class="alternative">
+				<h4>Sign up for Newsletters</h4>
+
+				<div class="options">
+					<div class="checkbox-group">
+						<InputCheckbox @bind-Value="SubscriberForm.DailyNewsletter" />
+						<label>DailyNewsletter</label>
+					</div>
+					<div class="checkbox-group">
+						<InputCheckbox checked=checked @bind-Value="SubscriberForm.AdvertisingUpdates" />
+						<label>Advertising Updates</label>
+					</div>
+					<div class="checkbox-group">
+						<InputCheckbox @bind-Value="SubscriberForm.WeekinReview" />
+						<label>Week in Review</label>
+					</div>
+					<div class="checkbox-group">
+						<InputCheckbox @bind-Value="SubscriberForm.EventUpdates" />
+						<label>Event Updates</label>
+					</div>
+					<div class="checkbox-group">
+						<InputCheckbox @bind-Value="SubscriberForm.StartupsWeekly" />
+						<label>Startups Weekly</label>
+					</div>
+					<div class="checkbox-group">
+						<InputCheckbox @bind-Value="SubscriberForm.Podcasts" />
+						<label> Podcasts</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-email">
+				<div class="input-group">
+					<i class="fa-regular fa-envelope"></i>
+					<InputText type="email" @bind-Value="SubscriberForm.Email" placeholder="Enter your email"/>
+					<span asp-validation-for="Email"></span>
+				</div>
+				<button type="submit" class="btn btn-theme">Subscribe *</button>
+			</div>
+			<ValidationMessage For="@(() => SubscriberForm.Email)" class="input-validation-error" />
+			<span class="status-message">@StatusMessage</span>
+			
+		@* 	else
+			{ 
+					<span class="status-message"><span>*</span> Yes, I agree to the <a href="#">terms</a> and <a href="#">privacy policy</a>."</span>
+			}
+		*@
+		</EditForm>
+	</div>
+</section>
+
+@code{
+
+	[SupplyParameterFromQuery]
+	public string StatusMessage { get; set; } = "* Yes, I agree to the terms and privacy policy.";
+
+	[SupplyParameterFromForm]
+	private SubscribeFormModel SubscriberForm { get; set; } = new SubscribeFormModel();
+
+	private async Task OnValidSubmit()
+	{
+		Console.WriteLine(SubscriberForm);
+		try
+		{
+
+			// // 
+
+			// 	string serializedData = JsonSerializer.Serialize(SubscriberForm);
+
+			// var result = await Http.PostAsJsonAsync("http://localhost:7203/api/Subscribe", SubscriberForm);
+
+			var jsonContent = new StringContent(JsonSerializer.Serialize(SubscriberForm), Encoding.UTF8, "application/json");
+			var result = await Http.PostAsync("https://newsletterproviderr.azurewebsites.net/api/Subscribe?code=JKpePlcT7AYILDoyvxKOB03s_sSTBWqEAXvDeuFI5yWWAzFu_hcU-Q%3D%3D", jsonContent);
+
+
+			if (result.IsSuccessStatusCode)
+				StatusMessage = "Thank you for subscribing!";
+
+			else
+			{
+				var reply = await result.Content.ReadAsStringAsync();
+				StatusMessage = reply;
+			}
+			
+		}
+		catch 
+		{
+			StatusMessage = "An error occured please try again"; 
+		}
+
+		SubscriberForm = new SubscribeFormModel();
+	}
+
+	public class SubscribeFormModel {
+
+		
+		[EmailAddress]
+		[Required(ErrorMessage = "Enter a valid email.")]
+		[Display(Name = "E-mail address", Prompt = "Your Email")]
+
+		public string Email { get; set; } = null!;
+		public bool DailyNewsletter { get; set; }
+		public bool AdvertisingUpdates { get; set; }
+		public bool WeekinReview { get; set; }
+		public bool EventUpdates { get; set; }
+		public bool StartupsWeekly { get; set; }
+		public bool Podcasts { get; set; }
+	}
+}

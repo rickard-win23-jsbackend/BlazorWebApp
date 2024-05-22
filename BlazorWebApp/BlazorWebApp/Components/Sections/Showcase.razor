@@ -1,0 +1,47 @@
+﻿
+
+<section id="overview" class="showcase">
+	<img class="background-image" src="/images/home/showcaseimage.svg" alt="Task Management Assistant" />
+	<div class="container">
+		<div class="content" id="text-block-content">
+			<h1>Task Management Assistant You Gonna Love</h1>
+			<p>We offer you a new generation of task management system. Plan,manage & track all of your tasks in one flexible tool.</p>
+			<a class="btn-theme-s" href="#">Get started for free.</a>
+			<h6>Largest companies use our tool to work efficiently</h6>
+			<div>
+				@if (brandList != null)
+				{
+					@foreach (var brand in brandList)
+					{
+						<div class="brands">
+							<img src="@brand.ImageUrl" alt="@brand.AltText" />
+						</div>
+					};
+				}
+			</div>
+		</div>
+	</div>
+
+</section>
+
+
+@code{
+
+	private class Brands
+	{
+		public string? AltText { get; set; }
+		public string? ImageUrl { get; set; }
+	}
+
+	private readonly List<Brands> brandList = new List<Brands>
+{
+	new Brands {  AltText = "", ImageUrl = "/images/home/logo.svg" },
+	new Brands {  AltText = "", ImageUrl = "/images/home/logo-1.svg" },
+	new Brands { AltText = "", ImageUrl = "/images/home/logo-2.svg" },
+	new Brands { AltText = "", ImageUrl = "/images/home/logo-3.svg" },
+
+
+ };
+
+
+}

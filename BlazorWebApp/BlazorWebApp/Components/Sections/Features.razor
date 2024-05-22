@@ -1,0 +1,76 @@
+﻿
+
+<section id="features" class="features">
+	<div class="container">
+		<h1>What do you get with our tool?</h1>
+		<p>Make sure your tasks are organized so you can set the priorities and focus on important.</p>
+		<div class="tool-features">
+            @if (featuresList != null)
+			{
+                @foreach (var feature in featuresList)
+				{
+					<div class="feature">
+						<img src="@feature.ImageUrl" alt="@feature.AltText" />
+						<h5>@feature.ImageTitle</h5>
+						<p>@feature.ImageText</p>
+					</div>
+				}
+			}
+		</div>
+	</div>
+</section>
+
+
+@code{
+
+	private class featuresClass
+	{
+		public string? ImageUrl { get; set; }
+		public string? AltText { get; set; }
+		public string? ImageTitle { get; set; }
+		public string? ImageText { get; set; }
+
+	};
+
+	private readonly List<featuresClass> featuresList = new List<featuresClass>
+	{
+	new (){
+  		ImageUrl = "/images/home/features/icon.svg",
+		AltText = "features icon",
+		ImageTitle="Comment on Tasks",
+		ImageText="Id mollis consectetur congue egestas egestas suspendisse blandit justo."},
+	new (){
+  		ImageUrl = "/images/home/features/icon-1.svg",
+		AltText = "features icon 1",
+		ImageTitle="Tasks Analytics",
+		ImageText="Non imperdiet facilisis nulla tellus Morbi scelerisque eget adipiscing vulputate."},
+		new()
+		{
+			ImageUrl = "/images/home/features/icon-2.svg",
+			AltText = "features icon 2",
+			ImageTitle = "Multiple Assignees",
+			ImageText = "A elementum, imperdiet enim, pretium etiam facilisi in aenean quam mauris."
+		},
+	new()
+		{
+			ImageUrl = "/images/home/features/icon-3.svg",
+			AltText = "features icon 3",
+			ImageTitle = "Notifications",
+			ImageText = "Diam, suspendisse velit cras ac. Lobortis diam volutpat, eget pellentesque viverra."
+		},
+	new()
+		{
+			ImageUrl = "/images/home/features/icon-4.svg",
+			AltText = "features icon 4",
+			ImageTitle = "Sections & Subtasks",
+			ImageText = "Mi feugiat hac id in. Sit elit placerat lacus nibh lorem ridiculus lectus."
+		},
+	new()
+		{
+			ImageUrl = "/images/home/features/icon-5.svg",
+			AltText = "features icon 5",
+			ImageTitle = "Data Security",
+			ImageText = "Aliquam malesuada neque eget elit nulla vestibulum nunc cras."
+		},
+		};
+}
