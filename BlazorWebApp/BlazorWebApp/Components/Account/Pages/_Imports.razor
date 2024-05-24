@@ -28,6 +28,7 @@
 
 
 @inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext _context
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IEmailSender<ApplicationUser> EmailSender

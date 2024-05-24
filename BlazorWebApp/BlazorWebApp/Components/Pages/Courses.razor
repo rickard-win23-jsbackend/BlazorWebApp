@@ -43,19 +43,7 @@
 			{
 				@foreach (var course in courses)
 				{
-				@* 	<div>
-						<p>"Id == "@course.Id</p>
-						<p>"IsBestseller == "@course.IsBestseller</p>
-						<p>"Title == "@course.Title</p>
-						<p>"Author == "@course.Authors</p>
-						<p>"Price == "@course.Prices.Price</p>
-						<p>"Currency == "@course.Prices.Currency</p>
-						<p>"DiscountPrice == "@course.Prices.Discount</p>
-						<p>"Hours == "@course.Hours</p>
-						<p>"ImageUri == "@course.ImageUri</p>
-						<p>"LikesInProcent == "@course.LikesInProcent</p>
-						<p>"Likes ==" @course.Likes</p>
-					</div> *@
+				
 				
 					<a class="course" asp-action="Details" asp-asp-controller="Courses" asp-route-id="@course.Id">
 						<p>"Id @course.Id</p>
@@ -98,7 +86,7 @@
 								}
 								else
 								{
-									@if(course.Authors.Count != 0)
+									@if(course.Authors.Any())
 									{
 									<span>@course.Authors[0].Name</span>	
 									}
@@ -117,7 +105,6 @@
 								}
 								<div class="price @(@course.Prices.Discount != 0 ? "discount-enabled" : "")">
 									@course.Prices.Price
-									
 								</div>
 							</div>
 							<div class="content-footer">

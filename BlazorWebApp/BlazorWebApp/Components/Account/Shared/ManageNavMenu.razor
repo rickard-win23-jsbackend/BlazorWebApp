@@ -7,20 +7,29 @@
 
 <ul class="nav nav-pills flex-column">
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage" Match="NavLinkMatch.All">Profile</NavLink>
+        <NavLink class="nav-link btn-gray" href="Account/Manage" Match="NavLinkMatch.All">Profile</NavLink>
     </li>
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Email">Email</NavLink>
+        <NavLink class="nav-link btn-gray" href="Account/Manage/Email">Email</NavLink>
     </li>
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/ChangePassword">Password</NavLink>
+        <NavLink class="nav-link btn-gray" href="Account/Manage/ChangePassword">Security</NavLink>
     </li>
     <li class="nav-item">
-        <button class="nav-link" @onclick="SignOut">Sign out</button>
+        <NavLink class="nav-link btn-gray" href="Account/Manage/#">Notifications</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link btn-gray" href="Account/Manage/#">Messages</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link btn-gray" href="Account/Manage/#">Saved Items</NavLink>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link btn-gray" @onclick="SignOut">Sign out</button>
     </li>
   
 
-     @if (hasExternalLogins)
+    @*  @if (hasExternalLogins)
     {
         <li class="nav-item">
             <NavLink class="nav-link" href="Account/Manage/ExternalLogins">External logins</NavLink>
@@ -31,7 +40,7 @@
     </li>
     <li class="nav-item">
         <NavLink class="nav-link" href="Account/Manage/PersonalData">Personal data</NavLink>
-    </li> 
+    </li>  *@
 </ul>
 
 
@@ -47,7 +56,6 @@
     public async Task SignOut()
     {
         await SignInManager.SignOutAsync();
-        
         RedirectManager.RedirectTo("/");
 
     }
