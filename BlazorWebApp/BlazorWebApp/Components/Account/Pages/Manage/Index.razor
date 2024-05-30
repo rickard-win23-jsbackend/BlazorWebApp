@@ -1,6 +1,7 @@
 ﻿@page "/Account/Manage"
 
 @using System.ComponentModel.DataAnnotations
+@using BlazorWebApp.Components.Sections
 @using Microsoft.AspNetCore.Identity
 @using BlazorWebApp.Data
 
@@ -11,43 +12,18 @@
 @attribute [StreamRendering]
 
 
- <section id="details">
+
+	 
 	@if (@user == null)
 	{
 	<p>Loading...</p>
 	}
 	else
 	{
-	 <AuthorizeView>
-		<Authorized>
-			<aside>
-
-				<div class="profile-info">
-					<img src="~/images/account/@user.UserProfile?.ProfileImage" alt=@($"user profile picture") />
-					
-					@* <EditForm enctype="multipart/form-data" method="post" Model="" FormName="" OnValidSubmit="">
-					<InputFile id="fileUploader " hidden />
-					<label for="fileUploader" class="btn btn-circle"><i class="fa-regular fa-refresh"></i></label>
-
-					</EditForm> *@
-
-
-						<h5>@($"{userProfile.Firstname} {userProfile.Lastname}")</h5>					
-						<p>@user.Email</p>
-
-				</div>
-				<nav>
-						<ManageNavMenu />
-					<a class="btn-theme-s" asp-controller="Account" asp-action="Details"><i class="fa-thin fa-gear"></i>Account Details</a>
-					<a class="btn-gray" asp-controller="Auth" asp-action="SignOut"><i class="fa-sharp fa-light fa-left-from-bracket"></i>Sign Out</a>
-				</nav>
-			</aside>
-		</Authorized>
-	</AuthorizeView>
 
 	<div class="container" id="account-details">
 		<div id="forms">
-				<EditForm Model="formModelInstance" FormName="profileFormName" OnValidSubmit="OnValidSubmitAsync" method="post">
+			 	<EditForm Model="formModelInstance" FormName="profileFormName" OnValidSubmit="OnValidSubmitAsync" method="post">
 				<DataAnnotationsValidator />
 				<ValidationSummary class="text-danger" role="alert" />
 				<h1>Account Details</h1>
@@ -70,8 +46,8 @@
 					</div>
 					<div id="form-phone" class="input-group">
 						<label>Phone (opinional)</label>
-						<span><ValidationMessage For="() => formModelInstance.Phone" class="text-danger" /></span>
-						<InputText @bind-Value="formModelInstance.Phone" />
+							<span><ValidationMessage For="() => formModelInstance.Phone" class="text-danger" /></span>
+							<InputText @bind-Value="formModelInstance.Phone" placeholder="Enter your phone" />
 					</div>
 					<div id="form-bio" class="input-group">
 							<label>Biography (opinional)</label>
@@ -82,9 +58,9 @@
 					<button type="reset" class="btn-gray">Cancel</button>
 					<button type="submit" class="btn-theme-s">Save Changes</button>
 				</div> 
-			 </EditForm>
+			 </EditForm> 
 				@* <div>@statusMessage</div> *@
-			<EditForm Model="formModelInstance" FormName="profileFormAddress" OnValidSubmit="OnValidSubmitAsync" method="post">
+			 <EditForm Model="formModelInstance" FormName="profileFormAddress" OnValidSubmit="OnValidSubmitAsync" method="post">
 				<DataAnnotationsValidator />
 				<ValidationSummary class="text-danger" role="alert" />
 				<h1>Address</h1>
@@ -112,15 +88,16 @@
 						<button type="submit" class="btn-theme-s">Save Changes</button>
 					</div>
 				</div>
-			</EditForm>
+			</EditForm> 
 		</div>
 	</div>
+
 	}
-</section> 
 
 
 @code {
 	private ApplicationUser user = default!;
+
 	private UserProfile userProfile = default!;
 	private UserAddress userAddress = default!;
 	// private StatusMessage statusMessage = default;
@@ -146,13 +123,13 @@
 
 		userProfile = _context.UserProfiles.FirstOrDefault(x => x.Id == user.UserProfileId)!;
 
-
-		formModelInstance.FirstName ??= user?.UserProfile?.Firstname;
-		formModelInstance.LastName ??= user?.UserProfile?.Lastname;
-		formModelInstance.Email ??= user?.Email;
-		formModelInstance.Phone ??= user?.PhoneNumber;
-		formModelInstance.Bio ??= user?.UserProfile?.Bio;
-
+		
+		 	formModelInstance.FirstName ??= user?.UserProfile?.Firstname;
+			formModelInstance.LastName ??= user?.UserProfile?.Lastname;
+			formModelInstance.Email ??= user?.Email;
+			formModelInstance.Phone ??= user?.PhoneNumber;
+			formModelInstance.Bio ??= user?.UserProfile?.Bio;
+		
 
 		if (userAddressId != null)
 		{
@@ -169,11 +146,15 @@
 
 	private async Task OnValidSubmitAsync()
 	{
+		// user = await UserManager.ChangeEmailAsync(asd,asd,token)
 
 		Console.WriteLine(formModelInstance);
 
 		userProfile.Firstname = formModelInstance.FirstName != userProfile.Firstname ? formModelInstance.FirstName : userProfile.Firstname;
 		userProfile.Lastname = formModelInstance.LastName != userProfile.Lastname ? formModelInstance.LastName : userProfile.Lastname;
+
+		// user.Email = formModelInstance.Email != user.Email ? formModelInstance.Email : user.Email; //asdasdasd
+
 		userProfile.Bio = formModelInstance.Bio != userProfile.Bio ? formModelInstance.Bio : userProfile.Bio;
 
 		// Update user address information based on form input

@@ -1,10 +1,19 @@
-﻿@layout AccountLayout
+﻿@using BlazorWebApp.Components.Sections
+@layout AccountLayout
 
 
 
 
-<section id="details">>
+<section id="details">
 
-    @Body
-     
+		<aside>
+			<ProfileUploadComponent></ProfileUploadComponent>
+			<nav>
+				<ManageNavMenu />
+			</nav>
+		</aside>
+
+		@Body
+
 </section>
+

@@ -437,6 +437,9 @@ form {
         font-weight: 700;
     }
 
+#input-newsletter {
+    padding-left: 2rem !important;
+}
     form input {
         padding: 1rem;
         border-radius: 8px !important;
@@ -828,10 +831,13 @@ footer {
         #signin .container form .content #form-email {
             grid-area: email;
         }
+            #signin .container form .content #form-email.input-group{
+                width:100%;
+            }
 
-        #signin .container form .content #form-password {
-            grid-area: password;
-        }
+            #signin .container form .content #form-password {
+                grid-area: password;
+            }
 
         #signin .container form .content #form-terms {
             grid-area: terms;

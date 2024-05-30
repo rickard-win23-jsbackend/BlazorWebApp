@@ -1,0 +1,99 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using BlazorWebApp.Data
+@using System.Net.Http.Headers
+
+@rendermode InteractiveAuto
+
+
+
+		<div class="profile-info">
+			<div>
+				@statusnotworkingMessage
+			</div>
+			<img width="120" height="120" src="@profileImageUrl" alt=@($"user profile picture") />
+			<EditForm enctype="multipart/form-data" method="post" FormName="FileUpload"  Model="fileUploadProperty">
+				<InputFile id="fileUploader" type="file" name="file" OnChange="LoadFiles" hidden />
+				<label for="fileUploader" type="submit" class="btn btn-circle">
+					<i class="fa-regular fa-refresh"></i>
+				</label>
+			</EditForm>
+
+		@* <h5>@($"{userProfile.Firstname} {userProfile.Lastname}")</h5> 
+			 <p>@user.Email</p> *@
+
+	</div>
+
+
+@code {
+	private ApplicationUser user = default!;
+	// @context.User.Identity?.Name
+
+
+	private string statusnotworkingMessage = default!;
+	private string profileImageUrl = "https://filehandlersa.blob.core.windows.net/files/ea997d84-1a1f-4e45-8755-aa21baa1c1c9_profile-image.svg";
+
+	// private FileUploadModel fileUploadProperty = new FileUploadModel();
+
+	// [CascadingParameter]
+	// private HttpContext HttpContext { get; set; } = default!;
+
+	// [SupplyParameterFromForm]
+	private FileUploadModel fileUploadProperty { get; set; } = new();
+
+
+
+	public class FileUploadModel
+	{
+		public IFormFile file { get; set; } = null!;
+	}
+
+
+	private async Task LoadFiles(InputFileChangeEventArgs e)
+	{
+		var file = e.File;
+
+
+		using var content = new MultipartFormDataContent();
+		var fileContent = new StreamContent(file.OpenReadStream());
+		fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+		content.Add(fileContent, "file", file.Name);
+
+		try
+		{
+			var response = await Http.PostAsync("http://localhost:7063/api/Upload", content);
+
+			if (response.IsSuccessStatusCode)
+			{
+				var responseContent = await response.Content.ReadAsStringAsync();
+				var statusreply = await response.Content.ReadFromJsonAsync<FileEntity>();
+				if (statusreply.FilePath != null)
+				{
+					profileImageUrl =  statusreply.FilePath;
+					StateHasChanged();
+				}
+			}
+			else
+			{
+				statusnotworkingMessage = $"Error uploading {file.Name}: {response.ReasonPhrase}";
+			}
+		}
+		catch (Exception ex)
+		{
+			statusnotworkingMessage = $"An error occurred: {ex.Message}";
+		}
+		StateHasChanged();
+	}
+
+	public class FileEntity
+	{
+
+		public string FileName { get; set; }
+		public string FilePath { get; set; }
+		public string? ContentType { get; set; }
+
+		public string? ContainerName { get; set; }
+
+	}
+
+}

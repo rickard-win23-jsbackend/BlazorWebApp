@@ -42,7 +42,7 @@
 			<div class="form-email">
 				<div class="input-group">
 					<i class="fa-regular fa-envelope"></i>
-					<InputText type="email" @bind-Value="SubscriberForm.Email" placeholder="Enter your email"/>
+					<InputText type="email" id="input-newsletter" @bind-Value="SubscriberForm.Email" placeholder="Enter your email" />
 					<span asp-validation-for="Email"></span>
 				</div>
 				<button type="submit" class="btn btn-theme">Subscribe *</button>
@@ -69,18 +69,12 @@
 
 	private async Task OnValidSubmit()
 	{
-		Console.WriteLine(SubscriberForm);
 		try
 		{
 
-			// // 
-
-			// 	string serializedData = JsonSerializer.Serialize(SubscriberForm);
-
 			// var result = await Http.PostAsJsonAsync("http://localhost:7203/api/Subscribe", SubscriberForm);
 
-			var jsonContent = new StringContent(JsonSerializer.Serialize(SubscriberForm), Encoding.UTF8, "application/json");
-			var result = await Http.PostAsync("https://newsletterproviderr.azurewebsites.net/api/Subscribe?code=JKpePlcT7AYILDoyvxKOB03s_sSTBWqEAXvDeuFI5yWWAzFu_hcU-Q%3D%3D", jsonContent);
+			var result = await Http.PostAsJsonAsync("https://newsletterproviderr.azurewebsites.net/api/Subscribe?code=JKpePlcT7AYILDoyvxKOB03s_sSTBWqEAXvDeuFI5yWWAzFu_hcU-Q%3D%3D", SubscriberForm);
 
 
 			if (result.IsSuccessStatusCode)
@@ -96,6 +90,7 @@
 		catch 
 		{
 			StatusMessage = "An error occured please try again"; 
+
 		}
 
 		SubscriberForm = new SubscribeFormModel();
