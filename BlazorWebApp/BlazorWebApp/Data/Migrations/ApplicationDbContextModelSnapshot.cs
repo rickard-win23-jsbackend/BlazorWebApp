@@ -119,7 +119,7 @@ namespace BlazorWebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAddresses");
+                    b.ToTable("UserAddresses", (string)null);
                 });
 
             modelBuilder.Entity("BlazorWebApp.Data.UserProfile", b =>
@@ -143,7 +143,7 @@ namespace BlazorWebApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfiles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

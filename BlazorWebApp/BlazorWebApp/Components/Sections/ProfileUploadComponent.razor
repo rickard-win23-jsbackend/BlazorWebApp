@@ -1,98 +1,187 @@
 ﻿@using System.ComponentModel.DataAnnotations
+@using BlazorWebApp.Components.Account.Shared
 @using Microsoft.AspNetCore.Identity
 @using BlazorWebApp.Data
 @using System.Net.Http.Headers
 
-@rendermode InteractiveAuto
+@inherits ManageLayout
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+@inject ApplicationDbContext _context
 
 
+@rendermode InteractiveAuto 
 
-		<div class="profile-info">
-			<div>
-				@statusnotworkingMessage
-			</div>
-			<img width="120" height="120" src="@profileImageUrl" alt=@($"user profile picture") />
-			<EditForm enctype="multipart/form-data" method="post" FormName="FileUpload"  Model="fileUploadProperty">
-				<InputFile id="fileUploader" type="file" name="file" OnChange="LoadFiles" hidden />
-				<label for="fileUploader" type="submit" class="btn btn-circle">
-					<i class="fa-regular fa-refresh"></i>
-				</label>
-			</EditForm>
 
-		@* <h5>@($"{userProfile.Firstname} {userProfile.Lastname}")</h5> 
-			 <p>@user.Email</p> *@
+<div class="profile-info">
 
+
+	@if (user?.UserProfile?.ProfileImage == null)
+	{
+		<img width="120" height="120" src="/images/account/profile-image.svg" alt=@($"user profile picture 2") />
+	}
+	else
+	{
+		<img width="120" height="120" src="@user.UserProfile.ProfileImage" alt=@($"user profile picture") />
+
+	}
+	<EditForm FormName="FileUpload" Model="fileUploadProperty">
+		@* <InputFile id="fileUploader" type="file" name="file" OnChange="HandleSelectedFiles" hidden /> *@
+		<InputFile id="fileUploader" type="file" name="file" OnChange="LoadFiles" hidden />
+		<label for="fileUploader" type="submit" class="btn btn-circle">
+			<i class="fa-regular fa-refresh"></i>
+		</label>
+
+		<h5>@($"{userProfile?.Firstname} {userProfile?.Lastname}")</h5>
+		<p>@user?.Email</p>
+	</EditForm>
+	<div>
+		@statusnotworkingMessage
 	</div>
+
+	@* <p>parameter eventcallback = @OnProfileImageUrlChangeChild</p> *@
+	@* <p>Cascading parameter = @profileImageUrl</p> *@
+
+
+
+
+
+
+</div>
 
 
 @code {
-	private ApplicationUser user = default!;
-	// @context.User.Identity?.Name
 
 
+	[CascadingParameter]
+	public ApplicationUser userAtProfile { get; set; }
 
 
-	// private FileUploadModel fileUploadProperty = new FileUploadModel();
+	[CascadingParameter]
+	public HttpContext? HttpContext { get; set; }
 
-	// [CascadingParameter]
-	// private HttpContext HttpContext { get; set; } = default!;
 
-	// [SupplyParameterFromForm]
+	public UserProfile userProfile;
+	public UserAddress userAddress;
+
+	private IBrowserFile? selectedFile;
+	private MultipartFormDataContent uploadModel = new MultipartFormDataContent();
+
+
+	private string statusnotworkingMessage = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		// user = await UserManager.GetUserAsync(HttpContext.User);
+
+		// if (user != null)
+		// {
+
+		// 	userProfile = _context.UserProfiles.FirstOrDefault(x => x.Id == user.UserProfileId)!;
+
+		// 	var userAddressId = user.UserAddressId;
+		// 	if (userAddressId != null)
+		// 	{
+		// 		userAddress = _context.UserAddresses.FirstOrDefault(x => x.Id == user.UserAddressId)!;
+		// 	}
+		// }
+
+	}
+	private void HandleSelectedFiles(InputFileChangeEventArgs e)
+	{
+		selectedFile = e.File;
+	}
+
+	private async Task LoadFiles(InputFileChangeEventArgs e)
+	{
+		var file = e.File;
+		using var content = new MultipartFormDataContent();
+		var fileContent = new StreamContent(file.OpenReadStream());
+		fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+		content.Add(fileContent, "file", file.Name);
+		try
+		{
+
+			var response = await Http.PostAsync("https://fileprovider9.azurewebsites.net/api/Upload?code=fB8QfuN1O52KyI5HBeWrb9MV55PPh6gsK5MCJenAFScRAzFuU1Qrhg%3D%3D", content);
+			if (response.IsSuccessStatusCode)
+			{
+				var responseContent = await response.Content.ReadAsStringAsync();
+				var statusreply = await response.Content.ReadFromJsonAsync<FileEntity>();
+
+				if (statusreply.FilePath != null)
+				{
+					// var user = await UserManager.GetUserAsync(HttpContext.User);
+
+					// userProfile = _context.UserProfiles.FirstOrDefault(x => x.Id == user.UserProfileId);
+
+					// userProfile.ProfileImage = statusreply.FilePath;
+
+					statusnotworkingMessage = statusreply.FilePath;
+					StateHasChanged();
+
+
+					// await _context.SaveChangesAsync();
+					// statusnotworkingMessage = "loadfiles completed!";
+
+
+					
+					// profileImageUrl = statusreply.FilePath;
+					// await callbackString.InvokeAsync(statusreply.FilePath);
+				}
+			}
+			else
+			{
+				statusnotworkingMessage = $"Error uploading {file.Name}: {response.ReasonPhrase}";
+				StateHasChanged();
+			}
+		}
+		catch (Exception ex)
+		{
+			statusnotworkingMessage = $"An error occurred: {ex.Message}";
+			StateHasChanged();
+		}
+		
+		
+	}
+
 	private FileUploadModel fileUploadProperty { get; set; } = new();
-
-
 
 	public class FileUploadModel
 	{
 		public IFormFile file { get; set; } = null!;
 	}
 
-
-	private async Task LoadFiles(InputFileChangeEventArgs e)
-	{
-		var file = e.File;
-
-
-		using var content = new MultipartFormDataContent();
-		var fileContent = new StreamContent(file.OpenReadStream());
-		fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-		content.Add(fileContent, "file", file.Name);
-
-		try
-		{
-			var response = await Http.PostAsync("http://localhost:7063/api/Upload", content);
-
-			if (response.IsSuccessStatusCode)
-			{
-				var responseContent = await response.Content.ReadAsStringAsync();
-				var statusreply = await response.Content.ReadFromJsonAsync<FileEntity>();
-				if (statusreply.FilePath != null)
-				{
-					profileImageUrl =  statusreply.FilePath;
-					StateHasChanged();
-				}
-			}
-			else
-			{
-				statusnotworkingMessage = $"Error uploading {file.Name}: {response.ReasonPhrase}";
-			}
-		}
-		catch (Exception ex)
-		{
-			statusnotworkingMessage = $"An error occurred: {ex.Message}";
-		}
-		StateHasChanged();
-	}
-
 	public class FileEntity
 	{
-
 		public string FileName { get; set; }
 		public string FilePath { get; set; }
 		public string? ContentType { get; set; }
-
 		public string? ContainerName { get; set; }
-
 	}
 
+
+	// [Parameter]
+	// public EventCallback<string> callbackString { get; set; }
+
+	// [Parameter]
+	// public string profileImageUrl { get; set; }
+
+
+	// public async void TriggerFunc(InputFileChangeEventArgs e)
+	// {
+	// 	await LoadFiles(e);
+	// }
+	// private async Task callbackFunction()
+	// {
+	// 	if (callbackString.HasDelegate)
+	// 	{
+	// 		await callbackString.InvokeAsync(profileImageUrl);
+	// 	}
+		// }
+
+	// @context.User.Identity?.Name
 }

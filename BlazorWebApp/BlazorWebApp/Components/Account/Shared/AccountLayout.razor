@@ -2,16 +2,19 @@
 @layout BlazorWebApp.Components.Layout.MainLayout
 @inject NavigationManager NavigationManager
 
-@if (HttpContext is null)
+
+
+@* @if (HttpContext is null)
 {
     <p>Loading...</p>
 }
-else
-{
+else{
+ *@
     @Body
-}
+   
+@* } *@
 
-@code {
+@* @code {
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
 
@@ -25,4 +28,4 @@ else
             NavigationManager.Refresh(forceReload: true);
         }
     }
-}
+} *@

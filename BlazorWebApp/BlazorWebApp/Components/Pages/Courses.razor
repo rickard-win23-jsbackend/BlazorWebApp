@@ -7,9 +7,6 @@
 @attribute [StreamRendering]
 @attribute [Authorize]
 
-<h3>Courses</h3>
-
-
 <PageTitle>Courses</PageTitle>
 
 <section class="courses">
@@ -46,7 +43,8 @@
 				
 				
 					<a class="course" asp-action="Details" asp-asp-controller="Courses" asp-route-id="@course.Id">
-						<p>"Id @course.Id</p>
+
+						@* <p>"Id @course.Id</p>
 						<p>"IsBestseller @course.IsBestseller</p>
 						<p>"Title @course.Title</p>
 						<p>"Author @course.Authors.FirstOrDefault();</p>
@@ -56,7 +54,7 @@
 						<p>"Hours @course.Hours</p>
 						<p>"ImageUri @course.ImageUri</p>
 						<p>"LikesInProcent @course.LikesInProcent</p>
-						<p>"Likes @course.Likes</p>
+						<p>"Likes @course.Likes</p> *@
 
 						<div class="image-box">
 							@if (course.IsBestseller)
@@ -64,7 +62,7 @@
 								<div class="bestseller">Best Seller</div>
 							}
 							<button class="btn btn-circle bookmark"><i class="fa-regular fa-bookmark"></i></button>
-							<img src="~/images/courses/@course.ImageUri" alt="@course.Title" />
+							<img src="@course.ImageUri" alt="@course.Title" />
 
 						</div>
 
@@ -95,7 +93,9 @@
 							<div class="pricing">
 								@if (@course.Prices.Currency == "USD")
 								{
-									<p class="currency">$</p>
+									<div>
+										<p class="currency@(@course.Prices.Discount !=0 ? "discount" : "" )">$</p>
+									</div>
 								}
 								@if (@course.Prices.Discount != 0)
 								{
@@ -172,7 +172,9 @@
 			// var query = new GraphQLQuery{ Query = "{ getCourses { id isBestseller title authors { name } prices { price discount currency } imageUri hours likesInProcent likes }}"};
 			var query = new GraphQLQuery { Query = "{ getCourses { id, isBestseller, isDigital, categories, title, ingress, starRating, reviews, likesInProcent, likes, hours, authors { name }, prices { currency, price, discount }, content { description, includes, programDetails { id, title, description } }, imageUri, imageHeaderUri } }" };
 
-			var response = await Http.PostAsJsonAsync("http://localhost:7267/api/graphql", query);
+			// var response = await Http.PostAsJsonAsync("http://localhost:7267/api/graphql", query);
+
+			var response = await Http.PostAsJsonAsync("https://graphqlsilicon.azurewebsites.net/api/graphql?code=BbobW8JFrQsHoKtHJVy_1INU8v03PI7bqcZsi_eHL8UyAzFuJOEwvw%3D%3D", query);
 
 			if (response.IsSuccessStatusCode)
 			{

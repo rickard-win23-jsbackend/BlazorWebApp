@@ -1,19 +1,97 @@
 ﻿@using BlazorWebApp.Components.Sections
 @layout AccountLayout
+@inherits AccountLayout
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+@using System.ComponentModel.DataAnnotations
+@using BlazorWebApp.Components.Sections
+@using Microsoft.AspNetCore.Identity
+@using BlazorWebApp.Data
+@inject ApplicationDbContext _context
 
 
-
+@* 	<CascadingValue Value="@profileImageUrl">
+			<ProfileUploadComponent profileImageUrl="@profileImageUrl" callbackString=@HandleEventCallback/>
+		</CascadingValue> *@
 
 <section id="details">
 
-		<aside>
-			<ProfileUploadComponent></ProfileUploadComponent>
-			<nav>
-				<ManageNavMenu />
-			</nav>
-		</aside>
+	@* <ProfileUploadComponent callbackString="@HandleEventCallback"></ProfileUploadComponent> *@
+	@* <CascadingValue Value="" TValue="ApplicationUser"> *@
 
-		@Body
+
+	<aside>
+		<ProfileUploadComponent></ProfileUploadComponent>
+
+		<nav>
+			<ManageNavMenu />
+		</nav>
+	</aside>
+		<div class="container" id="account-details">
+		<CascadingValue Value=HttpContextManageLayOut>
+			<CascadingValue Value=user >
+				@Body
+			</CascadingValue>
+		</CascadingValue>
+	
+
+	</div>
 
 </section>
 
+
+
+@code{
+
+
+	[CascadingParameter]
+	private HttpContext HttpContextManageLayOut { get; set; }
+
+	[CascadingParameter]
+	public ApplicationUser user { get; set; }
+
+	[CascadingParameter]
+	public UserProfile userProfile { get; set; }
+	[CascadingParameter]
+	public UserAddress userAddress { get; set; }
+
+
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		// user = await UserManager.GetUserAsync(HttpContext.User);
+
+		// 	if(user != null)
+		// 	{
+		// 		userProfile = _context.UserProfiles.FirstOrDefault(x => x.Id == user.UserProfileId)!;
+
+		// 		var userAddressId = user.UserAddressId;
+		// 		if (userAddressId != null)
+		// 		{
+		// 			userAddress = _context.UserAddresses.FirstOrDefault(x => x.Id == user.UserAddressId)!;
+		// 		}
+		// 		_context.SaveChanges();
+
+		// 	}
+			
+		
+		
+	}
+	
+
+	// [CascadingParameter]
+	// public string profileImageUrl { get; set; } = "";
+
+	// private void HandleEventCallback(string newUrl)
+	// {
+	// 	profileImageUrl = newUrl;
+	// }
+
+
+	// [CascadingParameter]
+	// public string profileImageUrl  =
+}

@@ -1217,6 +1217,12 @@ footer {
                         font-size: 18px;
                     }
 
+                    .courses .course-items .course .content .pricing .currencydiscount {
+                        color: red !important;
+                        font-weight: 900 !important;
+                    }
+                 
+
                     .courses .course-items .course .content .pricing .discount {
                         color: red;
                         font-weight: 900;

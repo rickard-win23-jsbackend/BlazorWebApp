@@ -5,13 +5,15 @@
 @using Microsoft.AspNetCore.Identity
 @using BlazorWebApp.Data
 
+@inherits ManageLayout
+
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityUserAccessor UserAccessor
 @inject IdentityRedirectManager RedirectManager
+
+
 @attribute [StreamRendering]
-
-
 
 	 
 	@if (@user == null)
@@ -20,8 +22,7 @@
 	}
 	else
 	{
-
-	<div class="container" id="account-details">
+	
 		<div id="forms">
 			 	<EditForm Model="formModelInstance" FormName="profileFormName" OnValidSubmit="OnValidSubmitAsync" method="post">
 				<DataAnnotationsValidator />
@@ -90,25 +91,29 @@
 				</div>
 			</EditForm> 
 		</div>
-	</div>
+	
 
 	}
 
 
 @code {
-	private ApplicationUser user = default!;
-
-	private UserProfile userProfile = default!;
-	private UserAddress userAddress = default!;
-	// private StatusMessage statusMessage = default;
-
-	// private string? phoneNumber;
 
 	[CascadingParameter]
-	private HttpContext HttpContext { get; set; } = default!;
+	public ApplicationUser userIndex { get; set; }	
 
-	// [SupplyParameterFromForm]
-	// private InputModel Input { get; set; } = new();
+	[CascadingParameter]
+	public HttpContext? HttpContext { get; set; }
+
+	public UserProfile userProfile;
+
+	public UserAddress userAddress;
+
+	private StatusMessage statusMessage = default;
+
+
+
+	// [Parameter]
+	// public HttpContext HttpContext { get; set; } = default!;
 
 	[SupplyParameterFromForm]
 	private FormModel formModelInstance { get; set; } = new();
@@ -116,46 +121,64 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		// string returnedEmail = HttpContext.User.Identity.Name;
 		user = await UserManager.GetUserAsync(HttpContext.User);
+		
 
 		// var userProfileId = user.UserProfileId;
-		var userAddressId = user.UserAddressId;
+		// var userAddressId = user.UserAddressId;
 
-		userProfile = _context.UserProfiles.FirstOrDefault(x => x.Id == user.UserProfileId)!;
+		// userProfile = _context.UserProfiles.FirstOrDefault(x => x.Id == user.UserProfileId)!;
 
-		
-		 	formModelInstance.FirstName ??= user?.UserProfile?.Firstname;
-			formModelInstance.LastName ??= user?.UserProfile?.Lastname;
+
+		if (user != null)
+		{
+			var userProfileId = user.UserProfileId;
+			var userAddressId = user.UserAddressId;
+
+			if (userAddressId != null)
+			{
+				userAddress =  _context.UserAddresses.FirstOrDefault(x => x.Id == user.UserAddressId)!;
+			}
+
+			if (userProfileId != null)
+			{
+				userProfile = _context.UserProfiles.FirstOrDefault(x => x.Id == user.UserProfileId);
+			}
+
+
+			formModelInstance.FirstName ??= userProfile.Firstname;
+			formModelInstance.LastName ??= userProfile.Lastname;
 			formModelInstance.Email ??= user?.Email;
 			formModelInstance.Phone ??= user?.PhoneNumber;
-			formModelInstance.Bio ??= user?.UserProfile?.Bio;
-		
+			formModelInstance.Bio ??= userProfile?.Bio;
 
-		if (userAddressId != null)
-		{
-			userAddress = _context.UserAddresses.FirstOrDefault(x => x.Id == user.UserAddressId);
 
-			formModelInstance.Addressline_1 ??= user?.UserAddress.AddressLine_1;
-			formModelInstance.Addressline_2 ??= user?.UserAddress?.AddressLine_2;
-			formModelInstance.PostalCode ??= user?.UserAddress?.PostalCode;
-			formModelInstance.City ??= user?.UserAddress?.City;
+			if (user?.UserAddressId != null)
+			{
+				user.UserAddress = _context.UserAddresses.FirstOrDefault(x => x.Id == user.UserAddressId);
+
+				formModelInstance.Addressline_1 ??= userAddress.AddressLine_1;
+				formModelInstance.Addressline_2 ??= userAddress.AddressLine_2;
+				formModelInstance.PostalCode ??= userAddress.PostalCode;
+				formModelInstance.City ??= userAddress.City;
+			}
 		}
-
 	}
 
 
 	private async Task OnValidSubmitAsync()
 	{
-		// user = await UserManager.ChangeEmailAsync(asd,asd,token)
+		// // user = await UserManager.ChangeEmailAsync(asd,asd,token)
 
-		Console.WriteLine(formModelInstance);
+		// Console.WriteLine(formModelInstance);
 
-		userProfile.Firstname = formModelInstance.FirstName != userProfile.Firstname ? formModelInstance.FirstName : userProfile.Firstname;
-		userProfile.Lastname = formModelInstance.LastName != userProfile.Lastname ? formModelInstance.LastName : userProfile.Lastname;
+		user.UserProfile.Firstname = formModelInstance.FirstName != user.UserProfile.Firstname ? formModelInstance.FirstName : user.UserProfile.Firstname;
+		user.UserProfile.Lastname = formModelInstance.LastName != user.UserProfile.Lastname ? formModelInstance.LastName : user.UserProfile.Lastname;
 
 		// user.Email = formModelInstance.Email != user.Email ? formModelInstance.Email : user.Email; //asdasdasd
 
-		userProfile.Bio = formModelInstance.Bio != userProfile.Bio ? formModelInstance.Bio : userProfile.Bio;
+		user.UserProfile.Bio = formModelInstance.Bio != user.UserProfile.Bio ? formModelInstance.Bio : user.UserProfile.Bio;
 
 		// Update user address information based on form input
 		if (user.UserAddressId == null && formModelInstance.Addressline_1 != null && formModelInstance.PostalCode != null && formModelInstance.City != null)
@@ -174,20 +197,22 @@
 
 		// if (formModelInstance.Addressline_1 != null && formModelInstance.PostalCode != null && formModelInstance.City != null)
 
-		if(userAddress != null)
+		if(user.UserAddress != null)
 		{
 
-			userAddress.AddressLine_1 = formModelInstance?.Addressline_1 != userAddress.AddressLine_1 ? formModelInstance.Addressline_1 : userAddress.AddressLine_1;
-			userAddress.AddressLine_2 = formModelInstance?.Addressline_2 != userAddress.AddressLine_2 ? formModelInstance.Addressline_2 : userAddress.AddressLine_2;
-			userAddress.PostalCode = formModelInstance?.PostalCode != userAddress.PostalCode ? formModelInstance.PostalCode : userAddress.PostalCode;
-			userAddress.City = formModelInstance?.City != userAddress.City ? formModelInstance.City : userAddress.City;
+			user.UserAddress.AddressLine_1 = formModelInstance?.Addressline_1 != user.UserAddress.AddressLine_1 ? formModelInstance.Addressline_1 : user.UserAddress.AddressLine_1;
+			user.UserAddress.AddressLine_2 = formModelInstance?.Addressline_2 != user.UserAddress.AddressLine_2 ? formModelInstance.Addressline_2 : user.UserAddress.AddressLine_2;
+			user.UserAddress.PostalCode = formModelInstance?.PostalCode != user.UserAddress.PostalCode ? formModelInstance.PostalCode : user.UserAddress.PostalCode;
+			user.UserAddress.City = formModelInstance?.City != user.UserAddress.City ? formModelInstance.City : user.UserAddress.City;
 
-			_context.UserAddresses.Update(userAddress);
+			_context.UserAddresses.Update(user.UserAddress);
 		}
-		
-		_context.UserProfiles.Update(userProfile);
+
+		_context.UserProfiles.Update(user.UserProfile);
+
 		await _context.SaveChangesAsync();
-		
+		StateHasChanged();
+
 		// await SignInManager.RefreshSignInAsync(user);
 		// RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
 
